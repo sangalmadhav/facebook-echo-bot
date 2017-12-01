@@ -13,7 +13,7 @@ public class FacebookBotVerticle extends AbstractVerticle {
       
     Router router = Router.router(vertx);
     
-    router.get("/api/whiskies").handler(this::getAll);
+    router.get("/webhook").handler(this::getAll);
     
     vertx.createHttpServer().requestHandler(router::accept)
     .listen(
@@ -21,9 +21,15 @@ public class FacebookBotVerticle extends AbstractVerticle {
   }
   
   private void getAll(RoutingContext routingContext) {
+    String challenge = routingContext.request().getParam("hub.challenge");
+    String token = routingContext.request().getParam("hub.verify_token");
+	String t = "76783489768943768946967847638";
+	if(!t.equals(token)){
+		challenge = "fake";
+	}
   routingContext.response()
       .putHeader("content-type", "application/json; charset=utf-8")
-      .end("Some sample ");
-}
+      .end(challenge);
+    }
 }
 
