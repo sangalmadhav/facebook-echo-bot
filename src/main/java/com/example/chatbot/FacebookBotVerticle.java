@@ -35,15 +35,35 @@ public class FacebookBotVerticle extends AbstractVerticle {
     }
     
     private void message(RoutingContext routingContext) {
-        String challenge = routingContext.request().getParam("hub.challenge");
-        String token = routingContext.request().getParam("hub.verify_token");
-    	String t = "76783489768943768946967847638";
-    	if(!t.equals(token)){
-    		challenge = "fake";
-    	}
-        routingContext.response()
-          .putHeader("content-type", "application/json; charset=utf-8")
-          .end(challenge);
+
+
+        System.out.println(routingContext.getBodyAsString());
+        final Hook hook = Json.decodeValue(routingContext.getBodyAsString(), Hook.class);
+
+        for(Hook.Item item : hook.entry) {
+            for (Content i : item.messaging) {
+
+
+                Response response = new Response();
+                response.recipient = i.sender;
+                response.message = i.message;
+
+                if (response.message.text == null) {
+                    response.message.text = "Thanks for your attachment";
+                } else {
+                    String data = response.message.text;
+
+                    if(data.contains("joke")){
+                        Jokes jokes = new Jokes();
+                        int random = (int) (Math.random() * jokes.jokes.size());
+                        response.message.text = (new Jokes()).jokes.get(random);
+                    } else {
+                        response.message.text = "Please please ask me to tell a joke";
+                    }
+                }
+
+            }
+        }
     }
     
     
