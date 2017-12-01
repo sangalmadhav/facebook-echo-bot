@@ -1,6 +1,6 @@
-# Vert.x Heroku Example
+# Facebook echo bot using Vert.x 
 
-This project shows how to deploy a Vert.x 3 applications to Heroku. The same application can be deployed using 3 approaches:
+This project shows how to deploy a facebook echo bot Vert.x 3 applications to Heroku. The same application can be deployed using 3 approaches:
 
 * Using a one click badge
 * Using the maven plugin
@@ -8,16 +8,13 @@ This project shows how to deploy a Vert.x 3 applications to Heroku. The same app
 
 If you use a fat-jar then deploying on heroku is as simple as one click. The only requirement is to create the Heroku specific [Procfile](../Procfile) with a `Dyno` of type web.
 
-## To deploy with the one click mode:
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://dashboard.heroku.com/new?&template=https%3A%2F%2Fgithub.com%2Fvert-x3%2Fvertx-examples)
 
 ## Use the Heroku Toolbelt
 
 Follow these steps, after installing the [Heroku Toolbelt](https://toolbelt.heroku.com/), to deploy with Maven:
 
 ```sh-session
-$ git clone https://github.com/vert-x3/vertx-examples
+$ git clone https://github.com/jboss-outreach/facebook-echo-bot.git
 $ heroku create
 $ mvn -pl heroku-example package heroku:deploy
 ```
@@ -27,10 +24,10 @@ $ mvn -pl heroku-example package heroku:deploy
 Follow these steps to deploy with Git.
 
 ```sh-session
-$ git clone https://github.com/vert-x3/vertx-examples
+$ git clone https://github.com/jboss-outreach/facebook-echo-bot.git
 $ heroku create
 $ heroku config:set MAVEN_CUSTOM_OPTS="-DskipTests -pl heroku-example"
 $ git push heroku master
 ```
 
-When creating a project of your own, you'll need to borrow from the [`Procfile`](https://github.com/vert-x3/vertx-examples/blob/master/Procfile) in the root directory of this project, and the `MAVEN_CUSTOM_OPTS` will only be necessary if your app is not the primary module of your Maven project.
+When creating a project of your own, you'll need to borrow from the [`Procfile`](https://github.com/jboss-outreach/facebook-echo-bot/blob/master/Procfile) in the root directory of this project, and the `MAVEN_CUSTOM_OPTS` will only be necessary if your app is not the primary module of your Maven project.
