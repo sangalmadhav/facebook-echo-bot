@@ -1,7 +1,5 @@
 package com.example.chatbot;
 
-import java.util.concurrent.Future;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
@@ -17,21 +15,15 @@ public class FacebookBotVerticle extends AbstractVerticle {
     
     router.get("/api/whiskies").handler(this::getAll);
     
-     vertx
-     .createHttpServer()
-     .requestHandler(router::accept)
-     .listen(
-         // Retrieve the port from the configuration,
-         // default to 8080.
-         config().getInteger("http.port", 8080),
-         result -> {}
-     );
+    vertx.createHttpServer().requestHandler(router::accept)
+    .listen(
+        Integer.getInteger("http.port"), System.getProperty("http.address", "0.0.0.0"));
   }
   
   private void getAll(RoutingContext routingContext) {
   routingContext.response()
       .putHeader("content-type", "application/json; charset=utf-8")
-      .end("Some sample data");
+      .end("Some sample ");
 }
 }
 
