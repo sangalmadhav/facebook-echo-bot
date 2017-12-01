@@ -5,13 +5,17 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class FacebookBotVerticle extends AbstractVerticle {
 
   @Override
   public void start() throws Exception {
       
+      
     Router router = Router.router(vertx);
+    
+    router.route().handler(BodyHandler.create());
     
     router.get("/webhook").handler(this::verify);
     
@@ -35,7 +39,6 @@ public class FacebookBotVerticle extends AbstractVerticle {
     }
     
     private void message(RoutingContext routingContext) {
-
 
         System.out.println(routingContext.getBodyAsString());
         final Hook hook = Json.decodeValue(routingContext.getBodyAsString(), Hook.class);
@@ -64,6 +67,10 @@ public class FacebookBotVerticle extends AbstractVerticle {
 
             }
         }
+        
+        routingContext.response()
+          .putHeader("content-type", "application/json; charset=utf-8")
+          .end("done");
     }
     
     
