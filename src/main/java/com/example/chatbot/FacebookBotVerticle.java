@@ -3,8 +3,10 @@ package com.example.chatbot;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class FacebookBotVerticle extends AbstractVerticle {
@@ -64,6 +66,15 @@ public class FacebookBotVerticle extends AbstractVerticle {
                         response.message.text = "Please please ask me to tell a joke";
                     }
                 }
+
+                WebClient client = WebClient.create(vertx);
+
+                String access_token = "EAAVZCYbgrbjcBAL2TmdZC2c0XpbXyqqNVdoiRJWcjQgqdco80WkYIRXNISjFvTm8UwLx59ziftYj2oNPPwZAC74BwtLLUC52F9xHkdReiBJnStoZAxWYZCaan7zyLwaZBNUhh7Nhj9LRUlRZAk3ZCtnb5m9bQuTj3HzgvGzPhEZA8OaOTqiLZBoO49";
+
+                client
+                        .post("graph.facebook.com", "/v2.6/me/messages/")
+                        .addQueryParam("access_token", access_token)
+                        .sendJsonObject(JsonObject.mapFrom(response), ar -> {});
 
             }
         }
