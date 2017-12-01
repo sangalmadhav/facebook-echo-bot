@@ -27,7 +27,7 @@ public class FacebookBotVerticle extends AbstractVerticle {
 	if(!t.equals(token)){
 		challenge = "fake";
 	}
-  routingContext.response()
+    routingContext.response()
       .putHeader("content-type", "application/json; charset=utf-8")
       .end(challenge);
     }
