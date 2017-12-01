@@ -1,9 +1,9 @@
-package io.vertx.example;
+package com.example.chatbot;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 
-public class HelloWorldVerticle extends AbstractVerticle {
+public class FacebookBotVerticle extends AbstractVerticle {
 
   @Override
   public void start() throws Exception {
