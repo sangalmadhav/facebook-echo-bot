@@ -16,18 +16,9 @@ Follow these steps, after installing the [Heroku Toolbelt](https://toolbelt.hero
 ```sh-session
 $ git clone https://github.com/jboss-outreach/facebook-echo-bot.git
 $ heroku create
-$ mvn -pl heroku-example package heroku:deploy
+$ mvn package heroku:deploy
 ```
 
-## Git
 
-Follow these steps to deploy with Git.
-
-```sh-session
-$ git clone https://github.com/jboss-outreach/facebook-echo-bot.git
-$ heroku create
-$ heroku config:set MAVEN_CUSTOM_OPTS="-DskipTests -pl heroku-example"
-$ git push heroku master
-```
 
 When creating a project of your own, you'll need to borrow from the [`Procfile`](https://github.com/jboss-outreach/facebook-echo-bot/blob/master/Procfile) in the root directory of this project, and the `MAVEN_CUSTOM_OPTS` will only be necessary if your app is not the primary module of your Maven project.
