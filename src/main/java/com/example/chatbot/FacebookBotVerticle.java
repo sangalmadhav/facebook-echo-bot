@@ -13,23 +13,39 @@ public class FacebookBotVerticle extends AbstractVerticle {
       
     Router router = Router.router(vertx);
     
-    router.get("/webhook").handler(this::getAll);
+    router.get("/webhook").handler(this::verify);
+    
+    router.post("/webhook").handler(this::message);
     
     vertx.createHttpServer().requestHandler(router::accept)
     .listen(
         Integer.getInteger("http.port"), System.getProperty("http.address", "0.0.0.0"));
   }
   
-  private void getAll(RoutingContext routingContext) {
-    String challenge = routingContext.request().getParam("hub.challenge");
-    String token = routingContext.request().getParam("hub.verify_token");
-	String t = "76783489768943768946967847638";
-	if(!t.equals(token)){
-		challenge = "fake";
-	}
-    routingContext.response()
-      .putHeader("content-type", "application/json; charset=utf-8")
-      .end(challenge);
+    private void verify(RoutingContext routingContext) {
+        String challenge = routingContext.request().getParam("hub.challenge");
+        String token = routingContext.request().getParam("hub.verify_token");
+    	String t = "76783489768943768946967847638";
+    	if(!t.equals(token)){
+    		challenge = "fake";
+    	}
+        routingContext.response()
+          .putHeader("content-type", "application/json; charset=utf-8")
+          .end(challenge);
     }
+    
+    private void message(RoutingContext routingContext) {
+        String challenge = routingContext.request().getParam("hub.challenge");
+        String token = routingContext.request().getParam("hub.verify_token");
+    	String t = "76783489768943768946967847638";
+    	if(!t.equals(token)){
+    		challenge = "fake";
+    	}
+        routingContext.response()
+          .putHeader("content-type", "application/json; charset=utf-8")
+          .end(challenge);
+    }
+    
+    
 }
 
