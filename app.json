@@ -5,13 +5,11 @@
   "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/JBoss_logo.svg/2000px-JBoss_logo.svg.png",
   "keywords": ["facebook", "codein", "fanatic"],
   "env": {
-    "SECRET_TOKEN": {
-      "description": "A secret key for verifying the integrity of signed cookies.",
-      "generator": "secret"
+    "facebook.verify.token": {
+      "description": "Its a random string that you will need to enter at facebook too."
     },
-    "WEB_CONCURRENCY": {
-      "description": "The number of processes to run.",
-      "value": "5"
+    "facebook.access.token": {
+      "description": "You will find this token at messenger page after selecting page."
     }
   }
 }
