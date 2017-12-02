@@ -9,6 +9,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.client.WebClientOptions;
 
 public class FacebookBotVerticle extends AbstractVerticle {
 
@@ -76,7 +77,9 @@ public class FacebookBotVerticle extends AbstractVerticle {
                     }
                 }
 
-                WebClient client = WebClient.create(vertx);
+                WebClientOptions options = new WebClientOptions();
+                options.setSsl(true).setLogActivity(true);
+                WebClient client = WebClient.create(vertx, options);
 
                 System.out.println(Json.encode(response));
 
