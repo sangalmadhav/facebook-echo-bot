@@ -3,5 +3,15 @@
   "description": "Echo echo",
   "repository": "https://github.com/jboss-outreach/facebook-echo-bot",
   "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/JBoss_logo.svg/2000px-JBoss_logo.svg.png",
-  "keywords": ["facebook", "codein", "fanatic"]
+  "keywords": ["facebook", "codein", "fanatic"],
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "WEB_CONCURRENCY": {
+      "description": "The number of processes to run.",
+      "value": "5"
+    }
+  }
 }
