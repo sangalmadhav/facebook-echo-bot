@@ -1,8 +1,5 @@
 package com.example.chatbot;
 
-import io.vertx.config.ConfigRetriever;
-import io.vertx.config.ConfigRetrieverOptions;
-import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
@@ -15,7 +12,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 
 public class FacebookBotVerticle extends AbstractVerticle {
 
-    ConfigRetriever retriever = ConfigRetriever.create(vertx);
 
     private String VERIFY_TOKEN;
     private String ACCESS_TOKEN;
@@ -56,8 +52,6 @@ public class FacebookBotVerticle extends AbstractVerticle {
         routingContext.response()
                 .putHeader("content-type", "application/json; charset=utf-8")
                 .end("done");
-
-        System.out.println(retriever.getCachedConfig().getString("facebook.token"));
 
         final Hook hook = Json.decodeValue(routingContext.getBodyAsString(), Hook.class);
 
@@ -105,21 +99,10 @@ public class FacebookBotVerticle extends AbstractVerticle {
     }
 
     private void updateProperties() {
-        ConfigStoreOptions fileStore = new ConfigStoreOptions()
-                .setType("file")
-                .setFormat("json")
-                .setConfig(new JsonObject().put("path", "config/application.json"));
-
-        ConfigRetrieverOptions options = new ConfigRetrieverOptions()
-                .addStore(fileStore);
-
-        retriever = ConfigRetriever.create(vertx, options);
-
-        retriever.getConfig(json -> {
-            VERIFY_TOKEN = json.result().getString("facebook.verify.token");
-            ACCESS_TOKEN = json.result().getString("facebook.access.token");
-        });
-
+        
+            VERIFY_TOKEN = System.getenv("facebook.verify.token");
+            ACCESS_TOKEN = System.getenv("facebook.access.token");
+        
     }
 
 
