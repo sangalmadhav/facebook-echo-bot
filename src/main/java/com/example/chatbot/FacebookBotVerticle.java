@@ -1,7 +1,10 @@
 package com.example.chatbot;
 
+import io.vertx.config.ConfigRetriever;
+import io.vertx.config.ConfigRetrieverOptions;
+import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -9,49 +12,56 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.core.buffer.Buffer;
 
 public class FacebookBotVerticle extends AbstractVerticle {
 
-  @Override
-  public void start() throws Exception {
-      
-      
-    Router router = Router.router(vertx);
-    
-    router.route().handler(BodyHandler.create());
-    
-    router.get("/webhook").handler(this::verify);
-    
-    router.post("/webhook").handler(this::message);
-    
-    vertx.createHttpServer().requestHandler(router::accept)
-    .listen(
-        Integer.getInteger("http.port"), System.getProperty("http.address", "0.0.0.0"));
-  }
-  
+    ConfigRetriever retriever = ConfigRetriever.create(vertx);
+
+    private String VERIFY_TOKEN;
+    private String ACCESS_TOKEN;
+
+    @Override
+    public void start() throws Exception {
+
+        updateProperties();
+
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.get("/webhook").handler(this::verify);
+
+        router.post("/webhook").handler(this::message);
+
+        vertx.createHttpServer().requestHandler(router::accept)
+                .listen(
+                        Integer.getInteger("http.port"), System.getProperty("http.address", "0.0.0.0"));
+    }
+
+
     private void verify(RoutingContext routingContext) {
         String challenge = routingContext.request().getParam("hub.challenge");
         String token = routingContext.request().getParam("hub.verify_token");
-    	String t = "76783489768943768946967847638";
-    	if(!t.equals(token)){
-    		challenge = "fake";
-    	}
-        routingContext.response()
-          .putHeader("content-type", "application/json; charset=utf-8")
-          .end(challenge);
-    }
-    
-    private void message(RoutingContext routingContext) {
-        
-        routingContext.response()
-          .putHeader("content-type", "application/json; charset=utf-8")
-          .end("done");
+        if (!token.equals(VERIFY_TOKEN)) {
+            challenge = "fake";
+        }
 
-        System.out.println(routingContext.getBodyAsString());
+        routingContext.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(challenge);
+    }
+
+    private void message(RoutingContext routingContext) {
+
+        routingContext.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end("done");
+
+        System.out.println(retriever.getCachedConfig().getString("facebook.token"));
+
         final Hook hook = Json.decodeValue(routingContext.getBodyAsString(), Hook.class);
 
-        for(Hook.Item item : hook.entry) {
+        for (Hook.Item item : hook.entry) {
             for (Content i : item.messaging) {
 
                 Response response = new Response();
@@ -63,7 +73,7 @@ public class FacebookBotVerticle extends AbstractVerticle {
                 } else {
                     String data = response.message.text;
 
-                    if(data.contains("joke")){
+                    if (data.contains("joke")) {
                         Jokes jokes = new Jokes();
                         int random = (int) (Math.random() * jokes.jokes.size());
                         response.message.text = (new Jokes()).jokes.get(random);
@@ -74,11 +84,11 @@ public class FacebookBotVerticle extends AbstractVerticle {
 
                 WebClient client = WebClient.create(vertx);
 
-                String access_token = "EAAVZCYbgrbjcBAL2TmdZC2c0XpbXyqqNVdoiRJWcjQgqdco80WkYIRXNISjFvTm8UwLx59ziftYj2oNPPwZAC74BwtLLUC52F9xHkdReiBJnStoZAxWYZCaan7zyLwaZBNUhh7Nhj9LRUlRZAk3ZCtnb5m9bQuTj3HzgvGzPhEZA8OaOTqiLZBoO49";
+                System.out.println(Json.encode(response));
 
                 client
-                        .post(443, "graph.facebook.com","/v2.6/me/messages/")
-                        .addQueryParam("access_token", access_token)
+                        .post(443, "graph.facebook.com", "/v2.6/me/messages/")
+                        .addQueryParam("access_token", ACCESS_TOKEN)
                         .sendJsonObject(JsonObject.mapFrom(response), ar -> {
                             if (ar.succeeded()) {
                                 // Obtain response
@@ -92,10 +102,26 @@ public class FacebookBotVerticle extends AbstractVerticle {
 
             }
         }
-        
-        
     }
-    
-    
+
+    private void updateProperties() {
+        ConfigStoreOptions fileStore = new ConfigStoreOptions()
+                .setType("file")
+                .setFormat("json")
+                .setConfig(new JsonObject().put("path", "config/application.json"));
+
+        ConfigRetrieverOptions options = new ConfigRetrieverOptions()
+                .addStore(fileStore);
+
+        retriever = ConfigRetriever.create(vertx, options);
+
+        retriever.getConfig(json -> {
+            VERIFY_TOKEN = json.result().getString("facebook.verify.token");
+            ACCESS_TOKEN = json.result().getString("facebook.access.token");
+        });
+
+    }
+
+
 }
 
